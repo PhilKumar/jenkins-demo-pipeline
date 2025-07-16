@@ -13,4 +13,19 @@ pipeline {
       }
     }
   }
+
+stage('Approval') {
+  steps {
+    input message: 'Do you want to deploy to production?', ok: 'Deploy Now'
+  }
+}
+
+  stage('Deploy') {
+    when {
+      expression { params.ENV == 'prod' }
+    }
+    steps {
+      echo "Deploying version: ${params.APP_VERSION} to production"
+    }
+  }
 }
