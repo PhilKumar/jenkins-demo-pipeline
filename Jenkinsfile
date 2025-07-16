@@ -12,20 +12,22 @@ pipeline {
         echo "Building version: ${params.APP_VERSION} for ${params.ENV}"
       }
     }
-  }
-
-stage('Approval') {
-  steps {
-    input message: 'Do you want to deploy to production?', ok: 'Deploy Now'
-  }
+    stage('Approval') {
+      when {
+        expression { params.ENV == 'prod' }
+      }
+      steps {
+        input message: 'Do you want to deploy to production?', ok: 'Deploy Now'
+      }
+    }
+    stage('Deploy') {
+      when {
+        expression { params.ENV == 'prod' }
+      }
+      steps {
+        echo "Deploying version: ${params.APP_VERSION} to production"
+      }
+    }
+}
 }
 
-  stage('Deploy') {
-    when {
-      expression { params.ENV == 'prod' }
-    }
-    steps {
-      echo "Deploying version: ${params.APP_VERSION} to production"
-    }
-  }
-}
